@@ -47,4 +47,11 @@ public interface FeedbackOrderService {
      * @return ResponseEntity<ResponseDTO | ErrorDTO>
      */
     ResponseEntity deleteFeedback(Integer orderId);
+
+    /**
+     * <p>Method to retrieve the latest 20 Feedback leaved by the user</p>
+     *
+     * @return ResponseEntity<List<ResponseDTO | ErrorDTO></>
+     */
+    ResponseEntity latestTwentyFeedback();
 }

@@ -4,6 +4,8 @@ import com.walmart.example.api.feedback.entity.Feedback;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * <p>Repository to manage the persistence in the database for the ENTITY Feedback</p>
  *
@@ -12,4 +14,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface FeedbackRepository extends CrudRepository<Feedback, Integer> {
+    List<Feedback> findAllByOrderByCreatedAsc();
 }

@@ -1,6 +1,8 @@
 package com.walmart.example.api.feedback.service.implementations;
 
 import com.walmart.example.api.feedback.dto.FeedbackDTO;
+import com.walmart.example.api.feedback.dto.GroceryOrderDTO;
+import com.walmart.example.api.feedback.dto.ResponseDTO;
 import com.walmart.example.api.feedback.entity.Feedback;
 import com.walmart.example.api.feedback.entity.GroceryOrder;
 import com.walmart.example.api.feedback.exceptions.ConflictException;
@@ -16,10 +18,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
- * <p>FeedbackOrder Implementation</p>
+ * <p>FeedbackOrderService Implementation</p>
  *
  * @author J. Ivan Martinez Mateos
  * @since 03/03/2021
@@ -49,19 +55,20 @@ public class FeedbackOrderServiceImpl implements FeedbackOrderService {
                     .orElseThrow(EntityNotFoundException::new);
 
             // Validating if the order has already a feedback
-            Optional.ofNullable(groceryOrder.getFeedback())
-                    .orElseThrow(() -> new ConflictException("order already has a feedback"));
+            if (groceryOrder.getFeedback() == null) {
+                Feedback nFeedback = new Feedback();
+                nFeedback.setRate(feedback.getRate());
+                nFeedback.setComment(feedback.getComment());
+                nFeedback = feedbackRepository.save(nFeedback);
 
-            Feedback nFeedback = new Feedback();
-            nFeedback.setRate(feedback.getRate());
-            nFeedback.setComment(feedback.getComment());
-            nFeedback = feedbackRepository.save(nFeedback);
+                groceryOrder.setFeedback(nFeedback);
+                groceryOrder = groceryOrderRepository.save(groceryOrder);
 
-            groceryOrder.setFeedback(nFeedback);
-            groceryOrder = groceryOrderRepository.save(groceryOrder);
-
-            response = ResponseEntity.status(HttpStatus.CREATED)
-                    .body(responseBuilder.buildResponse(groceryOrder));
+                response = ResponseEntity.status(HttpStatus.CREATED)
+                        .body(responseBuilder.buildResponse(groceryOrder));
+            } else {
+                throw new ConflictException("order already has a feedback");
+            }
         } catch (EntityNotFoundException | ConflictException e) {
             LOGGER.error("Failed with the next message: " + e.getMessage());
             response = ResponseEntity.status(HttpStatus.CONFLICT)
@@ -146,6 +153,30 @@ public class FeedbackOrderServiceImpl implements FeedbackOrderService {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(responseBuilder.buildErrorDTO(HttpStatus.NOT_FOUND, e.getMessage()));
         }
+
+        return response;
+    }
+
+    @Override
+    public ResponseEntity latestTwentyFeedback() {
+        LOGGER.info("LATEST FEEDBACK");
+        ResponseEntity response;
+        List<GroceryOrderDTO> latestFeedback = feedbackRepository.findAllByOrderByCreatedAsc()
+                .stream()
+                .map(feedback -> {
+                    /*In these case, there is no problem on using get in the optional, since we are receiving the order
+                      from the feedback so it has to exist the order*/
+                    GroceryOrder go = groceryOrderRepository.findByIdFeedback(feedback.getIdFeedback()).get();
+
+                    return responseBuilder.buildGroceryDTO(go);
+                })
+                .collect(Collectors.toList());
+
+        if (latestFeedback.size() > 20) {
+            latestFeedback = latestFeedback.subList(0, 20);
+        }
+
+        response = ResponseEntity.ok(latestFeedback);
 
         return response;
     }

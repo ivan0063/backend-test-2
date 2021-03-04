@@ -3,6 +3,7 @@ package com.walmart.example.api.feedback.repository;
 import com.walmart.example.api.feedback.entity.GroceryOrder;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,6 +16,6 @@ import java.util.Optional;
  */
 @Repository
 public interface GroceryOrderRepository extends CrudRepository<GroceryOrder, Integer> {
-    @Query("SELECT go FROM GROCERY_ORDER go WHERE go.id_grocery_order = ?1 and go.id_user = ?2")
-    Optional<GroceryOrder> findByOrderIdAndUserId(Integer orderId, Integer userId);
+    @Query(nativeQuery = true, value = "SELECT * FROM GROCERY_ORDER GO WHERE GO.ID_FEEDBACK = :idFeedback")
+    Optional<GroceryOrder> findByIdFeedback(@Param("idFeedback") Integer idFeedback);
 }

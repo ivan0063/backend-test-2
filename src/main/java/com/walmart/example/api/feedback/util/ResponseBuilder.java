@@ -1,6 +1,7 @@
 package com.walmart.example.api.feedback.util;
 
 import com.walmart.example.api.feedback.dto.ErrorDTO;
+import com.walmart.example.api.feedback.dto.GroceryOrderDTO;
 import com.walmart.example.api.feedback.dto.ResponseDTO;
 import com.walmart.example.api.feedback.entity.GroceryOrder;
 import org.modelmapper.ModelMapper;
@@ -43,5 +44,15 @@ public class ResponseBuilder {
      */
     public ResponseDTO buildResponse(GroceryOrder groceryOrder) {
         return modelMapper.map(groceryOrder, ResponseDTO.class);
+    }
+
+    /**
+     * <p>Method to build a GroceryDTO using the bean ModelMapper from an entity GroceryOrder</p>
+     *
+     * @param groceryOrder
+     * @return GroceryOrderDTO
+     */
+    public GroceryOrderDTO buildGroceryDTO(GroceryOrder groceryOrder) {
+        return modelMapper.map(groceryOrder, GroceryOrderDTO.class);
     }
 }

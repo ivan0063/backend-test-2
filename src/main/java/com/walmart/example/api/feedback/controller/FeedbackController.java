@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * <p>Rest Controller class to manage the feedback for the Grocery Orders</p>
  *
@@ -24,17 +26,22 @@ public class FeedbackController {
     }
 
     @PostMapping("{orderId}")
-    public ResponseEntity postFeedback(@RequestBody FeedbackDTO feedbackDTO, @PathVariable Integer orderId) {
+    public ResponseEntity postFeedback(@RequestBody @Valid FeedbackDTO feedbackDTO, @PathVariable Integer orderId) {
         return feedbackOrderService.createFeedback(orderId, feedbackDTO);
     }
 
     @PutMapping("{orderId}")
-    public ResponseEntity putFeedback(@PathVariable Integer orderId, @RequestBody FeedbackDTO feedbackDTO) {
+    public ResponseEntity putFeedback(@PathVariable Integer orderId, @RequestBody @Valid FeedbackDTO feedbackDTO) {
         return feedbackOrderService.editFeedback(orderId, feedbackDTO);
     }
 
     @DeleteMapping("{orderId}")
     public ResponseEntity deleteFeedback(@PathVariable Integer orderId) {
         return feedbackOrderService.deleteFeedback(orderId);
+    }
+
+    @GetMapping("latest")
+    public ResponseEntity latestTweentyFeedback() {
+        return feedbackOrderService.latestTwentyFeedback();
     }
 }

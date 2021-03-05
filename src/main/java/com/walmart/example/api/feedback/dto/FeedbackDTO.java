@@ -7,9 +7,10 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
- * <p>DTO to retrieve the Feedback entity information</p>
+ * <p>DTO to set/retrieve the Feedback entity information</p>
  *
  * @author J. Ivan Martinez Mateos
  * @since 03/03/2021
@@ -23,4 +24,5 @@ public class FeedbackDTO implements Serializable {
     @NotNull
     @NotBlank(message = "Rate should be present in the request")
     private String comment;
+    private Date created;
 }

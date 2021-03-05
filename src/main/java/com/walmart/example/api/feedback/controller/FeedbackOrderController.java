@@ -16,7 +16,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("api/order/feedback")
-public class FeedbackController {
+public class FeedbackOrderController {
     @Autowired
     private FeedbackOrderService feedbackOrderService;
 

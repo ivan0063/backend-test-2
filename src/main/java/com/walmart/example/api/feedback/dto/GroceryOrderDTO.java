@@ -1,6 +1,9 @@
 package com.walmart.example.api.feedback.dto;
 
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,6 +15,8 @@ import java.util.Date;
  */
 @Data
 public class GroceryOrderDTO implements Serializable {
+    @NotNull(message = "Shipping Address should be present in the request")
+    @NotBlank(message = "Shipping Address should be present in the request")
     private String shippingAddress;
     private Date creationDate;
     private FeedbackDTO feedback;

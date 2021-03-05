@@ -1,5 +1,6 @@
 package com.walmart.example.api.feedback.service;
 
+import com.walmart.example.api.feedback.dto.GroceryOrderDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface GroceryOrderService {
-    ResponseEntity createGroceryOrder(Integer orderId );
-
-    ResponseEntity readGroceryOrder(Integer orderId, Integer userId);
-
-    ResponseEntity editGroceryOrder(Integer orderId);
-
-    ResponseEntity deleteGroceryOrder(Integer orderId);
+    /**
+     * <p>Method to create a new GROCERY ORDER for an USER but only
+     * if the user exist</p>
+     * @param userId
+     * @param groceryOrderDTO
+     * @return ResponseEntity< ResponseDTO | ErrorDTO >
+     */
+    ResponseEntity createGroceryOrder(Integer userId, GroceryOrderDTO groceryOrderDTO);
 }

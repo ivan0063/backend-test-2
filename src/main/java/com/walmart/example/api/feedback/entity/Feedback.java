@@ -24,6 +24,5 @@ public class Feedback implements Serializable {
     private Integer rate;
     private String comment;
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 }

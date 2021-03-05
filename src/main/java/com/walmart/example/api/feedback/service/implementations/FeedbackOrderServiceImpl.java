@@ -2,7 +2,6 @@ package com.walmart.example.api.feedback.service.implementations;
 
 import com.walmart.example.api.feedback.dto.FeedbackDTO;
 import com.walmart.example.api.feedback.dto.GroceryOrderDTO;
-import com.walmart.example.api.feedback.dto.ResponseDTO;
 import com.walmart.example.api.feedback.entity.Feedback;
 import com.walmart.example.api.feedback.entity.GroceryOrder;
 import com.walmart.example.api.feedback.exceptions.ConflictException;
@@ -18,9 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -161,7 +158,7 @@ public class FeedbackOrderServiceImpl implements FeedbackOrderService {
     public ResponseEntity latestTwentyFeedback() {
         LOGGER.info("LATEST FEEDBACK");
         ResponseEntity response;
-        List<GroceryOrderDTO> latestFeedback = feedbackRepository.findAllByOrderByCreatedAsc()
+        List<GroceryOrderDTO> latestFeedback = feedbackRepository.findAllByOrderByCreatedDesc()
                 .stream()
                 .map(feedback -> {
                     /*In these case, there is no problem on using get in the optional, since we are receiving the order

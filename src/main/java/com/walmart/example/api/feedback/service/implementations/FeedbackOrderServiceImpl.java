@@ -2,6 +2,7 @@ package com.walmart.example.api.feedback.service.implementations;
 
 import com.walmart.example.api.feedback.dto.FeedbackDTO;
 import com.walmart.example.api.feedback.dto.GroceryOrderDTO;
+import com.walmart.example.api.feedback.dto.ResponseDTO;
 import com.walmart.example.api.feedback.entity.Feedback;
 import com.walmart.example.api.feedback.entity.GroceryOrder;
 import com.walmart.example.api.feedback.exceptions.ConflictException;
@@ -158,14 +159,14 @@ public class FeedbackOrderServiceImpl implements FeedbackOrderService {
     public ResponseEntity latestTwentyFeedback() {
         LOGGER.info("LATEST FEEDBACK");
         ResponseEntity response;
-        List<GroceryOrderDTO> latestFeedback = feedbackRepository.findAllByOrderByCreatedDesc()
+        List<ResponseDTO> latestFeedback = feedbackRepository.findAllByOrderByCreatedDesc()
                 .stream()
                 .map(feedback -> {
                     /*In these case, there is no problem on using get in the optional, since we are receiving the order
                       from the feedback so it has to exist the order*/
                     GroceryOrder go = groceryOrderRepository.findByIdFeedback(feedback.getIdFeedback()).get();
 
-                    return responseBuilder.buildGroceryDTO(go);
+                    return responseBuilder.buildResponse(go);
                 })
                 .collect(Collectors.toList());
 

@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>DTO to retrieve the GroceryOrder entity information</p>
@@ -20,4 +21,5 @@ public class GroceryOrderDTO implements Serializable {
     private String shippingAddress;
     private Date creationDate;
     private FeedbackDTO feedback;
+    private List<GroceryItemDTO> groceryItems;
 }

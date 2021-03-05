@@ -1,13 +1,19 @@
 package com.walmart.example.api.feedback.util;
 
 import com.walmart.example.api.feedback.dto.ErrorDTO;
+import com.walmart.example.api.feedback.dto.GroceryItemDTO;
 import com.walmart.example.api.feedback.dto.GroceryOrderDTO;
 import com.walmart.example.api.feedback.dto.ResponseDTO;
+import com.walmart.example.api.feedback.entity.GroceryItemOrder;
 import com.walmart.example.api.feedback.entity.GroceryOrder;
+import com.walmart.example.api.feedback.repository.GroceryItemOrderRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>Bean to build the main responses</p>
@@ -17,8 +23,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ResponseBuilder {
-    @Autowired
     private ModelMapper modelMapper;
+    private GroceryItemOrderRepository groceryItemOrderRepository;
+
+    @Autowired
+    public ResponseBuilder(ModelMapper modelMapper, GroceryItemOrderRepository groceryItemOrderRepository) {
+        this.modelMapper = modelMapper;
+        this.groceryItemOrderRepository = groceryItemOrderRepository;
+    }
 
     /**
      * <p>Method to build an Error response with a personalized http status and message</p>
@@ -43,16 +55,14 @@ public class ResponseBuilder {
      * @return ResponseDTO
      */
     public ResponseDTO buildResponse(GroceryOrder groceryOrder) {
-        return modelMapper.map(groceryOrder, ResponseDTO.class);
-    }
+        List<GroceryItemDTO> groceryItems = groceryItemOrderRepository.findAllByGroceryOrder(groceryOrder)
+                .stream()
+                .map(GroceryItemOrder::getGroceryItem)
+                .map(groceryItem -> this.modelMapper.map(groceryItem, GroceryItemDTO.class))
+                .collect(Collectors.toList());
 
-    /**
-     * <p>Method to build a GroceryDTO using the bean ModelMapper from an entity GroceryOrder</p>
-     *
-     * @param groceryOrder
-     * @return GroceryOrderDTO
-     */
-    public GroceryOrderDTO buildGroceryDTO(GroceryOrder groceryOrder) {
-        return modelMapper.map(groceryOrder, GroceryOrderDTO.class);
+        ResponseDTO response = modelMapper.map(groceryOrder, ResponseDTO.class);
+        response.getGroceryOrder().setGroceryItems(groceryItems);
+        return response;
     }
 }

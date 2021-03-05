@@ -25,4 +25,6 @@ public class Feedback implements Serializable {
     private String comment;
     @CreationTimestamp
     private Date created;
+    @Column(name = "FLAG_ITEM")
+    private Boolean flagItem;
 }

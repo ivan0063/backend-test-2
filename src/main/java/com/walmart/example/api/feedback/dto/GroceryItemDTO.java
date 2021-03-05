@@ -14,5 +14,4 @@ import java.io.Serializable;
 public class GroceryItemDTO implements Serializable {
     private String itemName;
     private Double price;
-    private FeedbackDTO feedback;
 }

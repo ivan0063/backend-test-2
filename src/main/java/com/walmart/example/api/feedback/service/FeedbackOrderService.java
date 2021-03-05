@@ -4,7 +4,7 @@ import com.walmart.example.api.feedback.dto.FeedbackDTO;
 import org.springframework.http.ResponseEntity;
 
 /**
- * <p>Service to manage the fedback - GroceryOrder interaction</p>
+ * <p>Service to manage the Feedback - GroceryOrder interaction</p>
  *
  * @author J. Ivan Martinez Mateos
  * @since 03/03/2021
@@ -49,9 +49,12 @@ public interface FeedbackOrderService {
     ResponseEntity deleteFeedback(Integer orderId);
 
     /**
-     * <p>Method to retrieve the latest 20 Feedback leaved by the user</p>
+     * <p>Method to retrieve the latest 20 Feedback leaved by the user
+     * but only count the once who belongs to a Order, also it can filter
+     * by rate, to diable the filtering set filterRate to -1</p>
      *
-     * @return ResponseEntity<List<ResponseDTO | ErrorDTO></>
+     * @param filteringRate
+     * @return
      */
-    ResponseEntity latestTwentyFeedback();
+    ResponseEntity latestTwentyFeedback(Integer filteringRate);
 }

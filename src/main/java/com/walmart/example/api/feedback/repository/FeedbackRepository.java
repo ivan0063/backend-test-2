@@ -15,4 +15,6 @@ import java.util.List;
 @Repository
 public interface FeedbackRepository extends CrudRepository<Feedback, Integer> {
     List<Feedback> findAllByOrderByCreatedDesc();
+
+    List<Feedback> findAllByRateOrderByCreatedDesc(Integer rate);
 }

@@ -1,9 +1,7 @@
 package com.walmart.example.api.feedback.util;
 
-import com.walmart.example.api.feedback.dto.ErrorDTO;
-import com.walmart.example.api.feedback.dto.GroceryItemDTO;
-import com.walmart.example.api.feedback.dto.GroceryOrderDTO;
-import com.walmart.example.api.feedback.dto.ResponseDTO;
+import com.walmart.example.api.feedback.dto.*;
+import com.walmart.example.api.feedback.entity.FeedbackUserItem;
 import com.walmart.example.api.feedback.entity.GroceryItemOrder;
 import com.walmart.example.api.feedback.entity.GroceryOrder;
 import com.walmart.example.api.feedback.repository.GroceryItemOrderRepository;
@@ -49,7 +47,8 @@ public class ResponseBuilder {
 
     /**
      * <p>Method to build a ResponseDTO using the bean ModelMapper from the entity GroceryOrder,
-     * since it has all the information required </p>
+     * since it has all the information required, also it retreive all the items that belong to
+     * the GroceryOrder and map into its respective DTO</p>
      *
      * @param groceryOrder
      * @return ResponseDTO
@@ -64,5 +63,16 @@ public class ResponseBuilder {
         ResponseDTO response = modelMapper.map(groceryOrder, ResponseDTO.class);
         response.getGroceryOrder().setGroceryItems(groceryItems);
         return response;
+    }
+
+    /**
+     * <p>Method to build a ResponseItemFeedbackDTO using the bean ModelMapper from the entity FeedbackUserItem
+     * since it has all the information</p>
+     *
+     * @param feedbackUserItem
+     * @return ResponseItemFeedbackDTO
+     */
+    public ResponseItemFeedbackDTO buildItemFeedbackResponse(FeedbackUserItem feedbackUserItem) {
+        return modelMapper.map(feedbackUserItem, ResponseItemFeedbackDTO.class);
     }
 }

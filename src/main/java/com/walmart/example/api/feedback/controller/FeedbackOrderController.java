@@ -41,7 +41,8 @@ public class FeedbackOrderController {
     }
 
     @GetMapping("latest")
-    public ResponseEntity latestTweentyFeedback() {
-        return feedbackOrderService.latestTwentyFeedback();
+    public ResponseEntity latestTweentyFeedback(@RequestParam(required = false, name = "rate", defaultValue = "-1")
+                                                Integer rateFilter) {
+        return feedbackOrderService.latestTwentyFeedback(rateFilter);
     }
 }

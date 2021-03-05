@@ -22,7 +22,4 @@ public class GroceryItem implements Serializable {
     @Column(name = "ITEM_NAME")
     private String itemName;
     private Double price;
-    @ManyToOne
-    @JoinColumn(name = "ID_FEEDBACK")
-    private Feedback feedback;
 }

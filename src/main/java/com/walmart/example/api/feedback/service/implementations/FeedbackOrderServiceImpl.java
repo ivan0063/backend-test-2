@@ -1,12 +1,12 @@
 package com.walmart.example.api.feedback.service.implementations;
 
 import com.walmart.example.api.feedback.dto.FeedbackDTO;
-import com.walmart.example.api.feedback.dto.GroceryOrderDTO;
 import com.walmart.example.api.feedback.dto.ResponseDTO;
 import com.walmart.example.api.feedback.entity.Feedback;
 import com.walmart.example.api.feedback.entity.GroceryOrder;
 import com.walmart.example.api.feedback.exceptions.ConflictException;
 import com.walmart.example.api.feedback.exceptions.EntityNotFoundException;
+import com.walmart.example.api.feedback.exceptions.RateOutOfRangeException;
 import com.walmart.example.api.feedback.repository.FeedbackRepository;
 import com.walmart.example.api.feedback.repository.GroceryOrderRepository;
 import com.walmart.example.api.feedback.service.FeedbackOrderService;
@@ -50,13 +50,14 @@ public class FeedbackOrderServiceImpl implements FeedbackOrderService {
         try {
             LOGGER.info("Making a new feedback, looking for the order");
             GroceryOrder groceryOrder = groceryOrderRepository.findById(orderId)
-                    .orElseThrow(EntityNotFoundException::new);
+                    .orElseThrow(() -> new EntityNotFoundException("GROCERY_ORDER"));
 
             // Validating if the order has already a feedback
             if (groceryOrder.getFeedback() == null) {
                 Feedback nFeedback = new Feedback();
                 nFeedback.setRate(feedback.getRate());
                 nFeedback.setComment(feedback.getComment());
+                nFeedback.setFlagItem(false);
                 nFeedback = feedbackRepository.save(nFeedback);
 
                 groceryOrder.setFeedback(nFeedback);
@@ -85,7 +86,7 @@ public class FeedbackOrderServiceImpl implements FeedbackOrderService {
         ResponseEntity response;
         try {
             GroceryOrder groceryOrder = groceryOrderRepository.findById(orderId)
-                    .orElseThrow(EntityNotFoundException::new);
+                    .orElseThrow(() -> new EntityNotFoundException("GROCERY_ORDER"));
             LOGGER.info("Founded! Making the response");
 
             response = ResponseEntity.ok(responseBuilder.buildResponse(groceryOrder));
@@ -108,7 +109,7 @@ public class FeedbackOrderServiceImpl implements FeedbackOrderService {
         ResponseEntity response;
         try {
             GroceryOrder groceryOrder = groceryOrderRepository.findById(orderId)
-                    .orElseThrow(EntityNotFoundException::new);
+                    .orElseThrow(() -> new EntityNotFoundException("GROCERY_ORDER"));
             LOGGER.info("Founded! updating the feedback");
 
             Feedback oldFeedback = Optional.ofNullable(groceryOrder.getFeedback())
@@ -138,7 +139,7 @@ public class FeedbackOrderServiceImpl implements FeedbackOrderService {
         ResponseEntity response;
         try {
             GroceryOrder groceryOrder = groceryOrderRepository.findById(orderId)
-                    .orElseThrow(EntityNotFoundException::new);
+                    .orElseThrow(() -> new EntityNotFoundException("GROCERY_ORDER"));
             LOGGER.info("Founded! building the response");
             Feedback delete = groceryOrder.getFeedback();
             groceryOrder.setFeedback(null);
@@ -156,25 +157,38 @@ public class FeedbackOrderServiceImpl implements FeedbackOrderService {
     }
 
     @Override
-    public ResponseEntity latestTwentyFeedback() {
-        LOGGER.info("LATEST FEEDBACK");
+    public ResponseEntity latestTwentyFeedback(Integer filteringRate) {
+        LOGGER.info("LATEST 20 FEEDBACK");
+        LOGGER.info("Filter rate " + filteringRate);
         ResponseEntity response;
-        List<ResponseDTO> latestFeedback = feedbackRepository.findAllByOrderByCreatedDesc()
-                .stream()
-                .map(feedback -> {
-                    /*In these case, there is no problem on using get in the optional, since we are receiving the order
-                      from the feedback so it has to exist the order*/
-                    GroceryOrder go = groceryOrderRepository.findByIdFeedback(feedback.getIdFeedback()).get();
 
-                    return responseBuilder.buildResponse(go);
-                })
-                .collect(Collectors.toList());
+        try {
+            LOGGER.info("Validating the range of the rate...");
+            if(filteringRate != -1 && (filteringRate < 1 || filteringRate > 5)) {
+                throw new RateOutOfRangeException();
+            }
 
-        if (latestFeedback.size() > 20) {
-            latestFeedback = latestFeedback.subList(0, 20);
+            // Validate if the filterRate has a valid value to filter or give the last 20 without filtering
+            List<Feedback> feedbacks = filteringRate == -1 ? feedbackRepository.findAllByOrderByCreatedDesc() :
+                    feedbackRepository.findAllByRateOrderByCreatedDesc(filteringRate);
+
+            List<ResponseDTO> latestFeedback = feedbacks.stream()
+                    .map(feedback -> groceryOrderRepository.findByIdFeedback(feedback.getIdFeedback()))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .filter(groceryOrder -> !groceryOrder.getFeedback().getFlagItem())
+                    .map(responseBuilder::buildResponse)
+                    .collect(Collectors.toList());
+
+            if (latestFeedback.size() > 20) {
+                latestFeedback = latestFeedback.subList(0, 20);
+            }
+
+            response = ResponseEntity.ok(latestFeedback);
+        }catch (RateOutOfRangeException e) {
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(responseBuilder.buildErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
-
-        response = ResponseEntity.ok(latestFeedback);
 
         return response;
     }

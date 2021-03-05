@@ -7,7 +7,7 @@ package com.walmart.example.api.feedback.exceptions;
  * @since 03/03/2021
  */
 public class EntityNotFoundException extends Exception{
-    public EntityNotFoundException() {
-        super("The entity could not be found in the database");
+    public EntityNotFoundException(String tableName) {
+        super("The entity(s) " + tableName + " could not be found in the database");
     }
 }

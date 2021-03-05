@@ -1,6 +1,6 @@
 package com.walmart.example.api.feedback.service;
 
-import com.walmart.example.api.feedback.dto.GroceryOrderDTO;
+import com.walmart.example.api.feedback.dto.RequestGroceryOrderDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -19,5 +19,5 @@ public interface GroceryOrderService {
      * @param groceryOrderDTO
      * @return ResponseEntity< ResponseDTO | ErrorDTO >
      */
-    ResponseEntity createGroceryOrder(Integer userId, GroceryOrderDTO groceryOrderDTO);
+    ResponseEntity createGroceryOrder(Integer userId, RequestGroceryOrderDTO groceryOrderDTO);
 }

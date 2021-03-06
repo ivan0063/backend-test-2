@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * <p>Rest Controller class to set Feedback to items</p>
  *
@@ -21,7 +23,7 @@ public class FeedbackItemController {
     @PostMapping("{itemId}")
     public ResponseEntity postFeedbackItem(@PathVariable Integer itemId,
                                            @RequestHeader("userId") Integer userId,
-                                           @RequestBody FeedbackDTO feedbackDTO) {
+                                           @RequestBody @Valid FeedbackDTO feedbackDTO) {
         return this. feedbackItemService.createFeedbackItem(itemId,userId,feedbackDTO);
     }
 }

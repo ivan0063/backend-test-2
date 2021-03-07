@@ -20,8 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FeedbackItemSeriveImpl implements FeedbackItemService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackItemSeriveImpl.class);
+public class FeedbackItemServiceImpl implements FeedbackItemService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackItemServiceImpl.class);
     private UserRepository userRepository;
     private GroceryItemRepository groceryItemRepository;
     private FeedbackRepository feedbackRepository;
@@ -29,8 +29,8 @@ public class FeedbackItemSeriveImpl implements FeedbackItemService {
     private ResponseBuilder responseBuilder;
 
     @Autowired
-    public FeedbackItemSeriveImpl(UserRepository userRepository, GroceryItemRepository groceryItemRepository,
-                                  FeedbackRepository feedbackRepository, FeedbackUserItemRepository feedbackUserItemRepository, ResponseBuilder responseBuilder) {
+    public FeedbackItemServiceImpl(UserRepository userRepository, GroceryItemRepository groceryItemRepository,
+                                   FeedbackRepository feedbackRepository, FeedbackUserItemRepository feedbackUserItemRepository, ResponseBuilder responseBuilder) {
         this.userRepository = userRepository;
         this.groceryItemRepository = groceryItemRepository;
         this.feedbackRepository = feedbackRepository;
